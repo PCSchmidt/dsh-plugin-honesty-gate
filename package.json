@@ -1,0 +1,41 @@
+{
+  "name": "dsh-plugin-honesty-gate",
+  "version": "0.1.0",
+  "description": "Meridian gate + independent Evaluator contracts as a DeepSeek Harness / Cordis plugin.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./gate-registry": "./src/gate-registry.js"
+  },
+  "files": [
+    "index.js",
+    "src",
+    "examples",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "cordis",
+    "deepseek-harness",
+    "meridian",
+    "gates"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "yaml": "^2.8.1"
+  }
+}

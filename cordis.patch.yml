@@ -1,0 +1,5 @@
+# Bundle layer inserted when a dsh profile lists this package.
+# Rows resolve by package name so the installed checkout is loaded.
+- insert:
+    - id: honesty-gate
+      name: dsh-plugin-honesty-gate

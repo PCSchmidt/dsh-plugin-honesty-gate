@@ -1,0 +1,39 @@
+# Honesty-gate example DAG — portfolio-kit contract 0.1.0
+# Mechanical pre-condition on tests_passing: tests_exist
+
+version: "1.0"
+
+project:
+  name: "honesty-gate-example"
+  recipe: "custom"
+  description: "Hello plugin + GateRegistry fixture"
+
+gates:
+  - id: confirmed
+    label: "Scope Confirmed"
+    type: human_approval
+    required: true
+    approval_token: "CONFIRMED"
+    requires: []
+    requires_artifacts:
+      - CONTRACT.md
+      - SPEC.md
+    hooks:
+      pre:
+        - artifacts_exist
+    emits: CONFIRMED_GATE.json
+    on_fail: block_all_writes
+
+  - id: tests_passing
+    label: "Tests Present"
+    type: automated
+    required: true
+    requires:
+      - confirmed
+    hooks:
+      pre:
+        - tests_exist
+    requires_artifacts:
+      - tests
+    emits: TEST_GATE.json
+    on_fail: block_gate_writes
