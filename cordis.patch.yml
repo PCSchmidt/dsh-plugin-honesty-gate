@@ -1,5 +1,8 @@
 # Bundle layer inserted when a dsh profile lists this package.
-# Rows resolve by package name so the installed checkout is loaded.
+# Rows resolve by package name so Node loads the installed checkout.
+# apply() reads optional config: gatesFile, workspaceRoot, memoryDir, project.
 - insert:
     - id: honesty-gate
       name: dsh-plugin-honesty-gate
+      config:
+        project: honesty-gate

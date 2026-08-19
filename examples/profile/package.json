@@ -1,0 +1,16 @@
+{
+  "name": "dsh-profile-honesty-gate-demo",
+  "private": true,
+  "description": "Example dsh profile that stacks dsh-base then this honesty-gate bundle. Created by hand for documentation; `dsh plugin --profile honesty-gate-demo add .` is the supported installer.",
+  "dependencies": {
+    "dsh-plugin-honesty-gate": "file:../.."
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "dsh-plugin-honesty-gate"
+      ]
+    }
+  }
+}

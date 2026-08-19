@@ -1,21 +1,22 @@
 # Status
 
-**Phase:** 3 — hello plugin + GateRegistry + Evaluator + memory
+**Phase:** 4 — bundle/profile polish + eval harness
 **Date:** 2026-08-19
 
 ## Done
 
 - Shallow-cloned `deepseek-ai/deepseek-harness` to `../deepseek-harness` at `dsh-v0.1.0-rc.8`
 - Cordis-shaped `name` + `apply(ctx)` bundle
-- GateRegistry: YAML DAG, cycle check, artifact / `tests_exist` mechanical verify
-- Independent Evaluator: fresh-context request isolation, mechanical adversarial judge, portfolio-kit verdict JSON
-- `advance(gateId)` fail-closed on mechanical fail or Evaluator `fail`
-- Schema-validated MemoryStore: semantic / episodic / corrections, hash dedupe, fail-closed writes, `revertLast()`
+- GateRegistry, Evaluator, MemoryStore (portfolio-kit 0.1.0)
+- Example profile layout under `examples/profile/`
+- `npm run eval` held-out harness (D3 gate-catch + verdict agreement)
+- CI: `.github/workflows/test.yml` runs `npm test` and `npm run eval`
+- AGENTS.md + CONTRIBUTING.md
 
 ## Not done
 
-- Live `dsh plugin add` against a running profile
-- Optional LLM judge (API)
-- `dsh-plugin` GitHub topic
+- Live `dsh plugin add` on this laptop (needs `dsh` CLI / full harness install)
+- Optional LLM judge
+- GitHub topic `dsh-plugin` (repo settings; cannot set from git)
 
-Next: profile/bundle polish and a small eval harness.
+Next: bake-off golden set, or live dsh install if the CLI is available.

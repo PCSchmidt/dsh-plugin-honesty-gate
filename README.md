@@ -2,9 +2,9 @@
 
 Ports Meridian’s Generator / Evaluator separation, mechanical gates, and validated memory into a [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) / Cordis plugin.
 
-**Status:** Phase 3 — hello plugin + GateRegistry + Evaluator + memory
+**Status:** Phase 4 — bundle/profile polish + eval harness
 
-Built on Meridian’s gate + independent Evaluator contracts. This increment is a loadable **bundle** plus a standalone GateRegistry and a fresh-context Evaluator that returns [portfolio-kit](https://github.com/PCSchmidt/portfolio-kit) verdict JSON. It does not boot a full dsh process.
+Built on Meridian’s gate + independent Evaluator contracts. Loadable **dsh bundle** (`name` + `apply(ctx)` + `cordis.patch.yml`) with GateRegistry, a fresh-context Evaluator, schema-validated memory, and a held-out eval table. Unit tests and `npm run eval` do not boot a full dsh process.
 
 ## Relation to Meridian
 
@@ -83,16 +83,17 @@ Invalid writes throw `MemoryError` and do not persist. `revertLast()` undoes the
 | `MemoryStore` | semantic.json + episodic.jsonl + corrections.jsonl |
 | Bundle | `dsh.bundle` + [cordis.patch.yml](cordis.patch.yml) |
 
-Not yet: live `dsh plugin add` against a running profile, LLM judge.
+Not yet: live `dsh` CLI on this machine, optional LLM judge.
 
 ## Develop
 
 ```sh
 npm install
 npm test
+npm run eval
 ```
 
-Requires Node.js 20+. Tests use `node:test` and do not start dsh.
+Requires Node.js 20+. Tests and eval use `node:test` / fixtures only.
 
 ## Install as a dsh bundle (when `dsh` is on PATH)
 
@@ -101,12 +102,26 @@ dsh plugin --profile honesty-gate-demo add .
 dsh --profile honesty-gate-demo --dump-config
 ```
 
+Example profile shape: [examples/profile](examples/profile). Expected dump: a `# == dsh-plugin-honesty-gate` layer inserting `id: honesty-gate`.
+
+Add the GitHub topic `dsh-plugin` on the repository settings page for discoverability.
+
+## Eval harness
+
+[eval/cases.json](eval/cases.json) is an 8-case held-out set (6 known-bad, 2 good).
+
+```sh
+npm run eval
+```
+
+Reports portfolio-kit **D3 gate-catch** on known-bad fixtures, verdict agreement, schema validity, and isolation of `generator_self_score` / `chat_history`. Target: catch ≥ 85% and 100% labeled agreement.
+
 ## Planned phases
 
-1. Clone dsh; Cordis hello plugin; GateRegistry + mec
-3. Schema-validated semantic / episodic / corrections memory *(this increment)* increment)*
+1. Clone dsh; Cordis hello plugin; GateRegistry + mechanical pre-condition
+2. Independent Evaluator + portfolio-kit verdict JSON
 3. Schema-validated semantic / episodic / corrections memory
-4. Profile/bundle polish, eval harness, `dsh-plugin` topic
+4. Profile/bundle polish + eval harness *(this increment)*
 
 ## Public / unclassified data only
 
@@ -119,12 +134,13 @@ index.js
 src/plugin.js
 src/gate-registry.js
 src/evaluator.js
+src/verdict.js
 src/memory-store.js
-schemas/evaluator-verdict.schema.json
-schemas/memory-
-schemas/evaluator-verdict.schema.json
+schemas/
+eval/cases.json
+eval/run.js
+examples/profile/
 cordis.patch.yml
-examples/
 tests/
 ```
 

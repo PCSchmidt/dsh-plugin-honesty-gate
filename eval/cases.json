@@ -1,0 +1,152 @@
+{
+  "project": "dsh-plugin-honesty-gate",
+  "runtime": "honesty-gate",
+  "rubric": "https://github.com/PCSchmidt/portfolio-kit/blob/main/docs/EVAL_RUBRIC_TEMPLATE.md",
+  "target_gate_catch": 0.85,
+  "cases": [
+    {
+      "case_id": "HG-001",
+      "kind": "bad",
+      "failure_mode": "missing_artifact",
+      "gate": "confirmed",
+      "expect_verdict": "fail",
+      "expect_mechanical": false,
+      "request": {
+        "gate": "confirmed",
+        "session_id": "aaaaaaaa",
+        "artifacts": [{ "path": "CONTRACT.md", "missing": true, "content": null }],
+        "gate_spec": { "requires_artifacts": ["CONTRACT.md"] }
+      }
+    },
+    {
+      "case_id": "HG-002",
+      "kind": "bad",
+      "failure_mode": "heading_only",
+      "gate": "confirmed",
+      "expect_verdict": "fail",
+      "expect_mechanical": true,
+      "request": {
+        "gate": "confirmed",
+        "session_id": "bbbbbbbb",
+        "artifacts": [{ "path": "SPEC.md", "content": "# SPEC.md\n\n## Feature\n" }],
+        "gate_spec": { "requires_artifacts": ["SPEC.md"] }
+      }
+    },
+    {
+      "case_id": "HG-003",
+      "kind": "bad",
+      "failure_mode": "stub_as_done",
+      "gate": "confirmed",
+      "expect_verdict": ["fail", "warn"],
+      "expect_mechanical": true,
+      "request": {
+        "gate": "confirmed",
+        "session_id": "cccccccc",
+        "artifacts": [{
+          "path": "CONTRACT.md",
+          "content": "# CONTRACT\n\nTODO implement this product later. Placeholder only."
+        }],
+        "gate_spec": { "requires_artifacts": ["CONTRACT.md"] }
+      }
+    },
+    {
+      "case_id": "HG-004",
+      "kind": "bad",
+      "failure_mode": "scope_drift",
+      "gate": "confirmed",
+      "expect_verdict": "fail",
+      "expect_mechanical": true,
+      "request": {
+        "gate": "confirmed",
+        "session_id": "dddddddd",
+        "artifacts": [
+          { "path": "CONTRACT.md", "content": "# C\n\nProduct brief for the demo.\n\n## Out of scope\n\n- User authentication system\n" },
+          { "path": "SPEC.md", "content": "# S\n\n## Feature\n\nBuild the user authentication system this sprint.\n" }
+        ],
+        "contract": "# C\n\nProduct brief for the demo.\n\n## Out of scope\n\n- User authentication system\n",
+        "spec": "# S\n\n## Feature\n\nBuild the user authentication system this sprint.\n",
+        "gate_spec": { "requires_artifacts": ["CONTRACT.md", "SPEC.md"] }
+      }
+    },
+    {
+      "case_id": "HG-005",
+      "kind": "good",
+      "failure_mode": null,
+      "gate": "confirmed",
+      "expect_verdict": "pass",
+      "expect_mechanical": true,
+      "request": {
+        "gate": "confirmed",
+        "session_id": "eeeeeeee",
+        "artifacts": [
+          {
+            "path": "CONTRACT.md",
+            "content": "# CONTRACT\n\nHonesty-gate example workspace. Public unclassified fixtures only.\n\n## Out of scope\n\n- Replacing Claude Code as a daily editor\n"
+          },
+          {
+            "path": "SPEC.md",
+            "content": "# SPEC\n\n## Feature: Hello plugin loads\n\nThe apply function registers honestyGate and GateRegistry loads this example DAG.\n"
+          }
+        ],
+        "contract": "# CONTRACT\n\nHonesty-gate example workspace.\n\n## Out of scope\n\n- Replacing Claude Code as a daily editor\n",
+        "spec": "# SPEC\n\n## Feature: Hello plugin loads\n\nThe apply function registers honestyGate.\n",
+        "gate_spec": { "requires_artifacts": ["CONTRACT.md", "SPEC.md"] }
+      }
+    },
+    {
+      "case_id": "HG-006",
+      "kind": "bad",
+      "failure_mode": "self_grade_contamination",
+      "gate": "confirmed",
+      "expect_verdict": "fail",
+      "expect_mechanical": false,
+      "request": {
+        "gate": "confirmed",
+        "session_id": "ffffffff",
+        "generator_self_score": 9.8,
+        "chat_history": ["I finished the gate", "tests are passing"],
+        "artifacts": [{ "path": "CONTRACT.md", "missing": true, "content": null }],
+        "gate_spec": { "requires_artifacts": ["CONTRACT.md"] }
+      }
+    },
+    {
+      "case_id": "HG-007",
+      "kind": "bad",
+      "failure_mode": "empty_artifact",
+      "gate": "confirmed",
+      "expect_verdict": "fail",
+      "expect_mechanical": false,
+      "request": {
+        "gate": "confirmed",
+        "session_id": "11111111",
+        "artifacts": [{ "path": "CONTRACT.md", "content": "   \n" }],
+        "gate_spec": { "requires_artifacts": ["CONTRACT.md"] }
+      }
+    },
+    {
+      "case_id": "HG-008",
+      "kind": "good",
+      "failure_mode": null,
+      "gate": "confirmed",
+      "expect_verdict": "pass",
+      "expect_mechanical": true,
+      "request": {
+        "gate": "confirmed",
+        "session_id": "22222222",
+        "artifacts": [
+          {
+            "path": "CONTRACT.md",
+            "content": "# CONTRACT\n\nDaily airspace-risk brief from public ADS-B and NOTAM fixtures.\n\n## Out of scope\n\n- Live employer inventory feeds\n"
+          },
+          {
+            "path": "SPEC.md",
+            "content": "# SPEC\n\n## Feature: Brief with citations\n\nEach risk flag cites a public NOTAM or ADS-B sample and a confidence score.\n"
+          }
+        ],
+        "contract": "# CONTRACT\n\nDaily airspace-risk brief from public ADS-B and NOTAM fixtures.\n\n## Out of scope\n\n- Live employer inventory feeds\n",
+        "spec": "# SPEC\n\n## Feature: Brief with citations\n\nEach risk flag cites a public NOTAM or ADS-B sample.\n",
+        "gate_spec": { "requires_artifacts": ["CONTRACT.md", "SPEC.md"] }
+      }
+    }
+  ]
+}

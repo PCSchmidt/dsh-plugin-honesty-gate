@@ -1,0 +1,6 @@
+# User/profile overlay applied after bundle layers.
+# Override honesty-gate config without editing the published package.
+- update:
+    - id: honesty-gate
+      config:
+        project: honesty-gate-demo
