@@ -22,3 +22,5 @@ Expected dump: a `# == dsh-plugin-honesty-gate` layer inserting `id: honesty-gat
 `dsh plugin` maintains the real profile manifest. Do not copy this folder into `$DSH_HOME` by hand unless you know the current Harness profile layout.
 
 Requires the `dsh` CLI (npm `npx @deepseek-ai/dsh` or a source checkout). This plugin's unit tests and `npm run eval` do **not** need it.
+
+Paused 2026-08-19: live `dsh plugin add` was not run on this laptop. Optional next check when work resumes.

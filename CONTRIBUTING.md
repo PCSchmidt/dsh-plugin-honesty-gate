@@ -2,6 +2,8 @@
 
 This package is an out-of-tree **dsh bundle**. Contracts live in [portfolio-kit](https://github.com/PCSchmidt/portfolio-kit).
 
+Paused 2026-08-19 after Phase 4. See [STATUS.md](STATUS.md). Prefer bake-off work over new plugin features unless you are adding a live dsh check or an LLM judge.
+
 ## Checks
 
 ```sh

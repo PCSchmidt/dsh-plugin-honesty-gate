@@ -2,7 +2,7 @@
 
 Ports Meridian’s Generator / Evaluator separation, mechanical gates, and validated memory into a [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) / Cordis plugin.
 
-**Status:** Phase 4 — bundle/profile polish + eval harness
+**Status:** Phase 4 complete — paused 2026-08-19
 
 Built on Meridian’s gate + independent Evaluator contracts. Loadable **dsh bundle** (`name` + `apply(ctx)` + `cordis.patch.yml`) with GateRegistry, a fresh-context Evaluator, schema-validated memory, and a held-out eval table. Unit tests and `npm run eval` do not boot a full dsh process.
 
@@ -121,7 +121,9 @@ Reports portfolio-kit **D3 gate-catch** on known-bad fixtures, verdict agreement
 1. Clone dsh; Cordis hello plugin; GateRegistry + mechanical pre-condition
 2. Independent Evaluator + portfolio-kit verdict JSON
 3. Schema-validated semantic / episodic / corrections memory
-4. Profile/bundle polish + eval harness *(this increment)*
+4. Profile/bundle polish + eval harness *(done)*
+
+Paused. Family remaining work: [portfolio-kit STATUS](https://github.com/PCSchmidt/portfolio-kit/blob/main/docs/STATUS.md).
 
 ## Public / unclassified data only
 
