@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/PCSchmidt/dsh-plugin-honesty-gate/schemas/memory-schema.json",
+  "title": "Honesty-gate Memory Schema",
+  "description": "Versioned copy of portfolio-kit / Meridian three-tier memory. Contract 0.1.0.",
+  "version": "0.1.0",
+  "definitions": {
+    "semantic_pattern": {
+      "type": "object",
+      "required": ["pattern_id", "description", "context", "confidence", "validated_count", "hash", "created", "last_validated"],
+      "additionalProperties": false,
+      "properties": {
+        "pattern_id": { "type": "string", "pattern": "^PAT-[A-Z0-9]+-[0-9]{3}$" },
+        "description": { "type": "string", "minLength": 10, "maxLength": 500 },
+        "context": { "type": "string", "minLength": 10 },
+        "confidence": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "validated_count": { "type": "integer", "minimum": 1 },
+        "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "created": { "type": "string", "format": "date-time" },
+        "last_validated": { "type": "string", "format": "date-time" },
+        "source_projects": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "episodic_event": {
+      "type": "object",
+      "required": ["timestamp", "event_type", "session_id"],
+      "additionalProperties": false,
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "event_type": {
+          "type": "string",
+          "enum": [
+            "session_start",
+            "session_end",
+            "gate_passed",
+            "gate_blocked",
+            "stop_event",
+            "feature_complete",
+            "error_logged"
+          ]
+        },
+        "session_id": { "type": "string", "pattern": "^[a-f0-9]{8}$" },
+        "gate": { "type": "string" },
+        "project": { "type": "string" },
+        "outcome": { "type": "string", "enum": ["pass", "fail", "warn", "block"] },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "artifacts": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "correction": {
+      "type": "object",
+      "required": ["session_id", "gate", "date", "project", "root_cause", "action_next"],
+      "additionalProperties": false,
+      "properties": {
+        "session_id": { "type": "string", "pattern": "^[a-f0-9]{8}$" },
+        "gate": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "project": { "type": "string", "minLength": 1 },
+        "predicted_hours": { "type": "number", "minimum": 0, "exclusiveMinimum": true },
+        "actual_hours": { "type": "number", "minimum": 0, "exclusiveMinimum": true },
+        "delta_ratio": { "type": "number" },
+        "variance_percent": { "type": "number" },
+        "root_cause": { "type": "string", "minLength": 10, "maxLength": 2000 },
+        "action_next": { "type": "string", "minLength": 10, "maxLength": 1000 },
+        "semantic_pattern_id": { "type": "string", "pattern": "^PAT-[A-Z0-9]+-[0-9]{3}$" },
+        "errors_open": { "type": "integer", "minimum": 0 },
+        "errors_close": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

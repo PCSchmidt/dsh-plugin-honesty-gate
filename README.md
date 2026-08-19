@@ -2,7 +2,7 @@
 
 Ports Meridian’s Generator / Evaluator separation, mechanical gates, and validated memory into a [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) / Cordis plugin.
 
-**Status:** Phase 2 — hello plugin + GateRegistry + independent Evaluator
+**Status:** Phase 3 — hello plugin + GateRegistry + Evaluator + memory
 
 Built on Meridian’s gate + independent Evaluator contracts. This increment is a loadable **bundle** plus a standalone GateRegistry and a fresh-context Evaluator that returns [portfolio-kit](https://github.com/PCSchmidt/portfolio-kit) verdict JSON. It does not boot a full dsh process.
 
@@ -28,7 +28,7 @@ flowchart TB
     subgraph plugin [dsh-plugin-honesty-gate]
         GR[GateRegistry YAML DAG]
         EV[Evaluator fresh request only]
-        MS[MemoryStore — later]
+        MS[MemoryStore schema-validated]
         GR --> EV
         EV --> MS
     end
@@ -60,6 +60,18 @@ Verdict rules (portfolio-kit / Meridian):
 
 Weights: completeness 0.30, quality 0.25, consistency 0.20, spec_adherence 0.25.
 
+## Memory (portfolio-kit 0.1.0)
+
+Default store: `<workspace>/.honesty-gate/memory/` (gitignored).
+
+| File | Rule |
+|------|------|
+| `semantic.json` | Patterns; SHA-256 hash dedupe; `validated_count` bump |
+| `episodic.jsonl` | Append-only `session_start` / `gate_passed` / `gate_blocked` / … |
+| `corrections.jsonl` | Append-only reflexion; hours optional |
+
+Invalid writes throw `MemoryError` and do not persist. `revertLast()` undoes the most recent write (reversible effect). `advance()` records `gate_passed` or `gate_blocked`. `remember()` / `reflect()` are the public semantic and correction writers.
+
 ## What is implemented
 
 | Piece | Behavior |
@@ -68,9 +80,10 @@ Weights: completeness 0.30, quality 0.25, consistency 0.20, spec_adherence 0.25.
 | `GateRegistry` | YAML DAG, cycles, `artifacts_exist` / `tests_exist` |
 | `Evaluator` | Fresh-context verdict JSON |
 | `advance` | Mechanical verify + Evaluator fail-closed |
+| `MemoryStore` | semantic.json + episodic.jsonl + corrections.jsonl |
 | Bundle | `dsh.bundle` + [cordis.patch.yml](cordis.patch.yml) |
 
-Not yet: schema-validated memory, live `dsh plugin add` against a running profile, LLM judge.
+Not yet: live `dsh plugin add` against a running profile, LLM judge.
 
 ## Develop
 
@@ -90,8 +103,8 @@ dsh --profile honesty-gate-demo --dump-config
 
 ## Planned phases
 
-1. Clone dsh; Cordis hello plugin; GateRegistry + mechanical pre-condition
-2. Independent Evaluator + portfolio-kit verdict JSON *(this increment)*
+1. Clone dsh; Cordis hello plugin; GateRegistry + mec
+3. Schema-validated semantic / episodic / corrections memory *(this increment)* increment)*
 3. Schema-validated semantic / episodic / corrections memory
 4. Profile/bundle polish, eval harness, `dsh-plugin` topic
 
@@ -106,7 +119,9 @@ index.js
 src/plugin.js
 src/gate-registry.js
 src/evaluator.js
-src/verdict.js
+src/memory-store.js
+schemas/evaluator-verdict.schema.json
+schemas/memory-
 schemas/evaluator-verdict.schema.json
 cordis.patch.yml
 examples/

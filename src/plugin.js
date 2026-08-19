@@ -4,10 +4,11 @@
  * GateRegistry does not require a live dsh process.
  */
 
-import { resolve } from 'node:path'
+import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { GateError, GateRegistry } from './gate-registry.js'
 import { Evaluator } from './evaluator.js'
+import { MemoryStore } from './memory-store.js'
 
 const DEFAULT_GATES = fileURLToPath(new URL('../examples/gates.yaml', import.meta.url))
 
@@ -24,6 +25,10 @@ export function apply(ctx = {}, options = {}) {
   const workspaceRoot = options.workspaceRoot
     ?? ctx.config?.workspaceRoot
     ?? process.cwd()
+  const memoryDir = options.memoryDir
+    ?? ctx.config?.memoryDir
+    ?? join(workspaceRoot, '.honesty-gate', 'memory')
+  const project = options.project ?? ctx.config?.project ?? 'honesty-gate'
 
   const events = []
   const emit = (event, payload) => {
@@ -33,38 +38,65 @@ export function apply(ctx = {}, options = {}) {
 
   const registry = GateRegistry.fromFile(resolve(gatesFile), { workspaceRoot, emit })
   const evaluator = new Evaluator({ emit, name: 'gate-evaluator' })
+  const memory = MemoryStore.open(memoryDir, { project, emit, sessionId: options.sessionId })
+  memory.doctor()
+  memory.appendEpisodic({ event_type: 'session_start' })
 
   const evaluate = (id, request) => {
     if (request) return evaluator.evaluate(request)
     const gate = registry.get(id)
-    return evaluator.evaluateWorkspace(id, gate, workspaceRoot)
+    return evaluator.evaluateWorkspace(id, gate, workspaceRoot, { session_id: memory.sessionId })
+  }
+
+  const recordBlock = (id, notes) => {
+    memory.appendEpisodic({
+      event_type: 'gate_blocked',
+      gate: id,
+      outcome: 'block',
+      notes,
+    })
   }
 
   const advance = (id) => {
     const verified = registry.verify(id)
     if (!verified.ok) {
-      throw new GateError(`cannot advance ${id}: ${verified.reasons.join('; ')}`, verified.exitCode)
+      const notes = verified.reasons.join('; ')
+      recordBlock(id, notes)
+      throw new GateError(`cannot advance ${id}: ${notes}`, verified.exitCode)
     }
     const verdict = evaluate(id)
     if (verdict.verdict === 'fail') {
+      recordBlock(id, verdict.notes)
       throw new GateError(
         `cannot advance ${id}: evaluator verdict fail (${verdict.notes})`,
         2,
       )
     }
-    return { gate: registry.markPassed(id), verdict }
+    const gate = registry.markPassed(id)
+    memory.appendEpisodic({
+      event_type: 'gate_passed',
+      gate: id,
+      outcome: verdict.verdict === 'warn' ? 'warn' : 'pass',
+      artifacts: verdict.artifacts_reviewed,
+      notes: verdict.notes,
+    })
+    return { gate, verdict, memory }
   }
 
   const service = {
     name,
     registry,
     evaluator,
+    memory,
     events,
     current: () => registry.current(),
     verify: (id) => registry.verify(id),
     evaluate,
     advance,
     markPassed: (id) => registry.markPassed(id),
+    remember: (input) => memory.writeSemantic(input),
+    reflect: (entry) => memory.appendCorrection(entry),
+    revertMemory: () => memory.revertLast(),
   }
 
   if (typeof ctx.provide === 'function') {

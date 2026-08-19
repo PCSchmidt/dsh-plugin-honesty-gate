@@ -7,7 +7,8 @@
   "exports": {
     ".": "./index.js",
     "./gate-registry": "./src/gate-registry.js",
-    "./evaluator": "./src/evaluator.js"
+    "./evaluator": "./src/evaluator.js",
+    "./memory": "./src/memory-store.js"
   },
   "files": [
     "index.js",
