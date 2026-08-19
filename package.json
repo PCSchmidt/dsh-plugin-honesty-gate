@@ -6,11 +6,13 @@
   "main": "index.js",
   "exports": {
     ".": "./index.js",
-    "./gate-registry": "./src/gate-registry.js"
+    "./gate-registry": "./src/gate-registry.js",
+    "./evaluator": "./src/evaluator.js"
   },
   "files": [
     "index.js",
     "src",
+    "schemas",
     "examples",
     "cordis.patch.yml",
     "README.md",

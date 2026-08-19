@@ -44,6 +44,30 @@ test('tools/pre-execute listener short-circuits without calling next when blocke
   assert.equal(nextCalled, false)
 })
 
+test('apply exposes evaluate and emits evaluator.verdict', () => {
+  const emitted = []
+  const ctx = {
+    emit: (event, payload) => emitted.push({ event, payload }),
+    logger: { info() {} },
+  }
+  const service = apply(ctx, { gatesFile: exampleGates, workspaceRoot: exampleRoot })
+  const verdict = service.evaluate('confirmed')
+  assert.equal(verdict.gate, 'confirmed')
+  assert.ok(['pass', 'warn', 'fail'].includes(verdict.verdict))
+  assert.ok(emitted.some((row) => row.event === 'evaluator.verdict'))
+})
+
+test('advance fails closed when the Evaluator returns fail', () => {
+  const service = apply({ logger: { info() {} } }, {
+    gatesFile: exampleGates,
+    workspaceRoot: fileURLToPath(new URL('.', import.meta.url)),
+  })
+  assert.throws(
+    () => service.advance('confirmed'),
+    (err) => err.name === 'GateError' && /cannot advance confirmed/.test(err.message),
+  )
+})
+
 test('tools/pre-execute calls next when the current gate verifies', async () => {
   let nextCalled = false
   let handler

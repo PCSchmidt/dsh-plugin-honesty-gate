@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/PCSchmidt/dsh-plugin-honesty-gate/schemas/evaluator-verdict.schema.json",
+  "title": "Evaluator Verdict",
+  "description": "Independent Evaluator output. Contract 0.1.0. Copied from portfolio-kit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "gate",
+    "session_id",
+    "timestamp",
+    "evaluator",
+    "artifacts_reviewed",
+    "scores",
+    "overall",
+    "issues",
+    "verdict",
+    "notes"
+  ],
+  "properties": {
+    "gate": { "type": "string", "minLength": 1 },
+    "session_id": { "type": "string", "minLength": 1 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "evaluator": { "type": "string", "minLength": 1 },
+    "artifacts_reviewed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completeness", "quality", "consistency", "spec_adherence"],
+      "properties": {
+        "completeness": { "type": "number", "minimum": 0, "maximum": 10 },
+        "quality": { "type": "number", "minimum": 0, "maximum": 10 },
+        "consistency": { "type": "number", "minimum": 0, "maximum": 10 },
+        "spec_adherence": { "type": "number", "minimum": 0, "maximum": 10 }
+      }
+    },
+    "overall": { "type": "number", "minimum": 0, "maximum": 10 },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact", "severity", "description"],
+        "properties": {
+          "artifact": { "type": "string" },
+          "severity": { "type": "string", "enum": ["high", "medium", "low"] },
+          "description": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "verdict": { "type": "string", "enum": ["pass", "warn", "fail"] },
+    "notes": { "type": "string", "maxLength": 500 }
+  }
+}

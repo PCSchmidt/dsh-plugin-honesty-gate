@@ -6,7 +6,8 @@
 
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { GateRegistry } from './gate-registry.js'
+import { GateError, GateRegistry } from './gate-registry.js'
+import { Evaluator } from './evaluator.js'
 
 const DEFAULT_GATES = fileURLToPath(new URL('../examples/gates.yaml', import.meta.url))
 
@@ -31,13 +32,38 @@ export function apply(ctx = {}, options = {}) {
   }
 
   const registry = GateRegistry.fromFile(resolve(gatesFile), { workspaceRoot, emit })
+  const evaluator = new Evaluator({ emit, name: 'gate-evaluator' })
+
+  const evaluate = (id, request) => {
+    if (request) return evaluator.evaluate(request)
+    const gate = registry.get(id)
+    return evaluator.evaluateWorkspace(id, gate, workspaceRoot)
+  }
+
+  const advance = (id) => {
+    const verified = registry.verify(id)
+    if (!verified.ok) {
+      throw new GateError(`cannot advance ${id}: ${verified.reasons.join('; ')}`, verified.exitCode)
+    }
+    const verdict = evaluate(id)
+    if (verdict.verdict === 'fail') {
+      throw new GateError(
+        `cannot advance ${id}: evaluator verdict fail (${verdict.notes})`,
+        2,
+      )
+    }
+    return { gate: registry.markPassed(id), verdict }
+  }
 
   const service = {
     name,
     registry,
+    evaluator,
     events,
     current: () => registry.current(),
     verify: (id) => registry.verify(id),
+    evaluate,
+    advance,
     markPassed: (id) => registry.markPassed(id),
   }
 
