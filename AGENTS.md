@@ -22,4 +22,4 @@ How coding agents should work in this repository.
 - Boot a full dsh process unless the task is specifically a live profile install.
 - Commit `.honesty-gate/`, `.env`, or non-public data.
 - Start redteam-blue-gate work from this repo.
-- Continue Phase 5+ honesty-gate work unless the user asked for live `dsh` or an LLM judge. Next family repo is agent-framework-bakeoff.
+- This repository is paused after Phase 4. Do not add Phase 5+ implementation unless the user explicitly asks for the live `dsh` check or the optional LLM judge. Follow the current family sequence in [portfolio-kit STATUS](https://github.com/PCSchmidt/portfolio-kit/blob/main/docs/STATUS.md).
